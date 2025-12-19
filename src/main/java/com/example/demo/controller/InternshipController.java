@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/internships")
-@CrossOrigin
+@CrossOrigin(origins = "https://internlinkweb.netlify.app")
 public class InternshipController {
 
     private final InternshipRepository internshipRepo;
@@ -30,7 +30,7 @@ public class InternshipController {
         return internshipRepo.findAll();
     }
 
-    // ✅ 2. GET INTERNSHIP BY ID (FOR DETAILS PAGE)
+    // ✅ 2. GET INTERNSHIP BY ID
     @GetMapping("/{id}")
     public Internship getById(@PathVariable Long id) {
         return internshipRepo.findById(id).orElse(null);
@@ -51,11 +51,11 @@ public class InternshipController {
         Internship internship = internshipRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Internship not found"));
 
-        // ✅ FIXED UPLOAD DIRECTORY (outside tomcat)
-        String uploadDir = "C:/internlink/uploads/";
+        // ✅ RENDER-SAFE UPLOAD DIRECTORY
+        String uploadDir = "uploads/";
         File dir = new File(uploadDir);
         if (!dir.exists()) {
-            dir.mkdirs(); // create folder if not exists
+            dir.mkdirs();
         }
 
         String fileName = System.currentTimeMillis() + "_" + resume.getOriginalFilename();
@@ -68,7 +68,7 @@ public class InternshipController {
         app.setSscMarks(sscMarks);
         app.setHscMarks(hscMarks);
         app.setCollege(college);
-        app.setResumePath(dest.getAbsolutePath());
+        app.setResumePath(dest.getPath());
         app.setInternship(internship);
 
         applicationRepo.save(app);
